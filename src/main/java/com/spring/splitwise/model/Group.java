@@ -3,6 +3,7 @@ package com.spring.splitwise.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.management.ConstructorParameters;
 import java.time.LocalDateTime;
@@ -24,14 +25,21 @@ public class Group {
     private String groupDescription;
 
     @ManyToOne
-    @JoinColumn(name = "created_by")
+    @JoinColumn(name = "user_id")
     private User createdBy;
 
+    @CreationTimestamp
     private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-    private LocalDateTime deletedAt;
 
-    @OneToMany(mappedBy = "group")
+    @CreationTimestamp
+    private LocalDateTime updatedAt;
+
+    @OneToMany(
+            mappedBy = "group",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
     private List<Member> members;
+
 
 }

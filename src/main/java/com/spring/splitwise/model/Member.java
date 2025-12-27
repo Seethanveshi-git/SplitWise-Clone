@@ -3,6 +3,7 @@ package com.spring.splitwise.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -17,17 +18,17 @@ public class Member {
     private Long id;
 
     // User in the group
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-    // Group the user belongs to
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id")
     private Group group;
 
+    @CreationTimestamp
     private LocalDateTime joinedAt;
-    private LocalDateTime deletedAt;
+
     private String STATUS = "PENDING";
 }
 
