@@ -28,5 +28,6 @@ public class Member {
 
     private LocalDateTime joinedAt;
     private LocalDateTime deletedAt;
+    private String STATUS = "PENDING";
 }
 

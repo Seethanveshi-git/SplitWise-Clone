@@ -27,23 +27,11 @@ public class User {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-
-    @OneToMany(mappedBy = "paidTo")
-    private List<Payment> paymentsReceived;
+    @OneToMany(mappedBy = "user")
+    private Set<Friendship> friends;
 
 
     @OneToMany(mappedBy = "user")
     private List<Member> memberships;
-
-
-    // Expenses paid by this user
-    @OneToMany(mappedBy = "paidBy")
-    private List<Expense> expensesPaid;
-
-    // Payments
-    @OneToMany(mappedBy = "paidBy")
-    private List<Payment> paymentsMade;
-
-
 
 }

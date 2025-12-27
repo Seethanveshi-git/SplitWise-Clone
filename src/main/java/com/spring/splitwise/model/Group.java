@@ -34,15 +34,4 @@ public class Group {
     @OneToMany(mappedBy = "group")
     private List<Member> members;
 
-
-
-
-//
-//    // Expenses in the group
-//    @OneToMany(mappedBy = "group")
-//    private List<Expense> expenses;
-//
-//    // Balances in the group
-//    @OneToMany(mappedBy = "group")
-//    private List<Balance> balances;
 }
