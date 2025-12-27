@@ -38,8 +38,7 @@ public class User {
             orphanRemoval = true)
     private Set<Friendship> friends;
 
-
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Member> memberships;
 
 }
