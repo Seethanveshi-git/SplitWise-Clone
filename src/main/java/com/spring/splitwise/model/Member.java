@@ -34,6 +34,6 @@ public class Member {
     @CreationTimestamp
     private LocalDateTime joinedAt;
 
-    private String STATUS = "PENDING";
+    private String status = "PENDING";
 }
 

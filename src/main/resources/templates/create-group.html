@@ -1,133 +1,59 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Start a new group</title>
+    <title th:text="${isEdit} ? 'Edit group' : 'Start a new group'">Group Form</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <style>
-        :root {
-            --splitwise-teal: #1cc29f;
-            --splitwise-orange: #ff6533;
-            --border-color: #ddd;
-            --text-muted: #999;
-        }
-
-        body {
-            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-            color: #333;
-            background-color: #fff;
-        }
-
-        .create-group-container {
-            max-width: 900px;
-            margin-top: 50px;
-        }
-
-        /* Left side logo styling */
-        .logo-section {
-            border-right: 1px solid var(--border-color);
-            padding-right: 40px;
-        }
-
-        .group-placeholder-img {
-            width: 180px;
-            height: 180px;
-            background: #eee;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 80px;
-            color: var(--text-muted);
-        }
-
-        /* Typography and Inputs */
-        .section-label {
-            font-size: 13px;
-            font-weight: 700;
-            color: var(--text-muted);
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
-        .group-title-input {
-            font-size: 24px;
-            border: 1px solid var(--border-color);
-            padding: 10px;
-            width: 100%;
-            margin-top: 10px;
-        }
-
-        /* Dynamic Rows */
-        .member-row input {
-            border: 1px solid transparent;
-            border-bottom: 1px dotted var(--border-color);
-            border-radius: 0;
-            padding-left: 0;
-        }
-
-        .member-row input:focus {
-            box-shadow: none;
-            border-bottom: 1px solid var(--splitwise-teal);
-        }
-
-        .add-person-btn {
-            color: var(--splitwise-teal);
-            font-weight: 600;
-            text-decoration: none;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        .add-person-btn:hover {
-            text-decoration: underline;
-        }
-
-        .save-btn {
-            background-color: var(--splitwise-orange);
-            color: white;
-            border: none;
-            padding: 12px 40px;
-            border-radius: 5px;
-            font-weight: bold;
-            font-size: 18px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .save-btn:hover {
-            background-color: #e65a2d;
-        }
+        :root { --sw-teal: #1cc29f; --sw-orange: #ff6533; --border-color: #ddd; --text-muted: #999; }
+        body { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; color: #333; }
+        .create-group-container { max-width: 900px; margin-top: 50px; }
+        .logo-section { border-right: 1px solid var(--border-color); padding-right: 40px; }
+        .group-placeholder-img { width: 180px; height: 180px; background: #eee; border: 1px solid var(--border-color); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 80px; color: var(--text-muted); }
+        .section-label { font-size: 13px; font-weight: 700; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+        .group-title-input { font-size: 24px; border: 1px solid var(--border-color); padding: 10px; width: 100%; margin-top: 10px; }
+        .member-row input { border: 1px solid transparent; border-bottom: 1px dotted var(--border-color); border-radius: 0; padding-left: 0; margin-bottom: 10px; }
+        .member-row input:focus { box-shadow: none; border-bottom: 1px solid var(--sw-teal); outline: none; }
+        .add-person-btn { color: var(--sw-teal); font-weight: 600; text-decoration: none; cursor: pointer; font-size: 14px; }
+        .save-btn { background-color: var(--sw-orange); color: white; border: none; padding: 10px 30px; border-radius: 5px; font-weight: bold; font-size: 18px; }
     </style>
 </head>
 <body class="container py-5">
+
 <div class="container create-group-container">
     <div class="row">
         <div class="col-md-4 logo-section d-flex flex-column align-items-center">
             <div class="group-placeholder-img mb-3">
-                <span>S</span>
+                <span id="group-initial" th:text="${isEdit and group.groupName != null} ? ${group.groupName[0]} : 'S'">S</span>
             </div>
         </div>
 
         <div class="col-md-8 ps-5">
-            <form th:action="@{/groups/save}" th:object="${group}" method="post">
-                <div class="section-label">Start a new group</div>
-                <h2 class="mt-2" style="font-weight: 500;">My group shall be called...</h2>
+            <form th:action="${isEdit} ? @{/groups/update} : @{/groups/save}" th:object="${group}" method="post">
 
-                <input type="text" th:field=*{groupName} class="group-title-input mb-4" placeholder="Group Name">
+                <input type="hidden" th:field="*{groupId}" th:if="${isEdit}">
+
+                <div class="section-label" th:text="${isEdit} ? 'Edit group settings' : 'Start a new group'">START A NEW GROUP</div>
+
+                <h2 class="mt-2" style="font-weight: 500;" th:text="${isEdit} ? 'Group name' : 'My group shall be called...'"></h2>
+
+                <input type="text" th:field="*{groupName}" class="group-title-input mb-4"
+                       placeholder="Group Name" oninput="updateInitial(this.value)" required>
 
                 <div class="section-label mt-4 mb-2">Group Members</div>
                 <div id="member-fields">
-                    <div class="row mb-2 align-items-center">
-                        <div class="col-auto">
-                            <img src="" class="rounded-circle" alt="user">
-                        </div>
-                        <div class="col">
-                            <span class="fw-bold">Seethanveshi</span>
-                            <span class="text-muted small">(krishnaseetha33@gmail.com)</span>
+                    <div th:if="${isEdit}" th:each="member, iter : ${group.members}">
+                        <div class="row mb-2 member-row">
+                            <div class="col">
+                                <input type="text" name="memberNames" class="form-control" th:value="${member.displayName}" placeholder="Name">
+                            </div>
+                            <div class="col">
+                                <input th:readonly="${member.user != null and member.user.id == group.createdBy.id}" type="email" name="memberEmails" class="form-control" th:value="${member.invitedEmail}" placeholder="Email address">
+                            </div>
+                            <div class="col-auto"><span class="text-danger" style="cursor:pointer" onclick="this.closest('.row').remove()">×</span></div>
                         </div>
                     </div>
 
-                    <div class="row mb-2 member-row">
+                    <div th:if="${!isEdit}" class="row mb-2 member-row">
                         <div class="col"><input type="text" name="memberNames" class="form-control" placeholder="Name"></div>
                         <div class="col"><input type="email" name="memberEmails" class="form-control" placeholder="Email address"></div>
                         <div class="col-auto"><span class="text-danger" style="cursor:pointer" onclick="this.closest('.row').remove()">×</span></div>
@@ -138,13 +64,27 @@
                     <span class="add-person-btn" onclick="addMemberRow()">+ Add a person</span>
                 </div>
 
-                <button type="submit" class="save-btn mt-5">Save</button>
+                <div class="mt-5">
+                    <button type="submit" class="save-btn" th:text="${isEdit} ? 'Save Changes' : 'Save'">Save</button>
+                    <a th:href="@{/groups/}" class="btn btn-link text-muted text-decoration-none ms-3">Cancel</a>
+                </div>
             </form>
+            <div th:if="${isEdit}" class="mt-5 pt-5 border-top">
+                <form th:action="@{/groups/delete/{id}(id=${group.groupId})}" method="post"
+                      onsubmit="return confirm('Are you sure you want to delete this group? All expenses will be lost forever.');">
+                    <button type="submit" class="btn btn-outline-danger btn-sm">Delete this group</button>
+                </form>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
+    function updateInitial(val) {
+        const span = document.getElementById('group-initial');
+        span.innerText = val ? val.charAt(0).toUpperCase() : 'S';
+    }
+
     function addMemberRow() {
         const row = `
             <div class="row mb-2 member-row">
@@ -153,23 +93,6 @@
                 <div class="col-auto"><span class="text-danger" style="cursor:pointer" onclick="this.closest('.row').remove()">×</span></div>
             </div>`;
         document.getElementById('member-fields').insertAdjacentHTML('beforeend', row);
-    }
-</script>
-<script>
-    function addRow() {
-        const container = document.getElementById('member-list');
-        const newRow = document.createElement('div');
-        newRow.className = 'row mb-2 member-row';
-        newRow.innerHTML = `
-            <div class="col"><input type="text" name="memberNames" class="form-control" placeholder="Name"></div>
-            <div class="col"><input type="email" name="memberEmails" class="form-control" placeholder="Email address (optional)"></div>
-            <div class="col-auto d-flex align-items-center"><span class="remove-btn" onclick="removeRow(this)">✖</span></div>
-        `;
-        container.appendChild(newRow);
-    }
-
-    function removeRow(btn) {
-        btn.closest('.member-row').remove();
     }
 </script>
 </body>

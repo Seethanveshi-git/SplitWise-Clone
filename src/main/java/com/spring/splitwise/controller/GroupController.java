@@ -36,26 +36,6 @@ public class GroupController {
         model.addAttribute("view", "dashboard");
         return "dashboard";
     }
-//
-//    @GetMapping("/groups/view/{id}")
-//    public String viewGroup(@PathVariable Long id, Model model) {
-//        model.addAttribute("user", getHardcodedUser());
-//        model.addAttribute("selectedGroup", groupService.findById(id).orElseThrow());
-//        model.addAttribute("view", "details");
-//        return "dashboard";
-//    }
-//
-//    @PostMapping("/groups/save")
-//    public String saveGroup(@RequestParam String groupName) {
-//        Group group = new Group();
-//        group.setGroupName(groupName);
-//        group.setCreatedBy(getHardcodedUser());
-//        groupService.save(group);
-//        return "redirect:/dashboard";
-//    }
-
-
-
 
     @GetMapping
     public String showlistgroups(Model model){
@@ -68,6 +48,7 @@ public class GroupController {
     public String showCreateGroupForm(Model model) {
         Group group = new Group();
         model.addAttribute("group", group);
+        model.addAttribute("isEdit", false);
         return "create-group";
     }
 
@@ -89,7 +70,30 @@ public class GroupController {
         model.addAttribute("selectedGroup", group);
         model.addAttribute("view", "details");
 
-        return "dashboard"; // same Thymeleaf template
+        return "dashboard";
     }
 
+    @GetMapping("/edit/{id}")
+    public String showEditForm(@PathVariable("id") Long id, Model model) {
+        Group group = groupService.findById(id);
+        model.addAttribute("group", group);
+        model.addAttribute("isEdit", true);
+        return "create-group";
+    }
+
+    @PostMapping("/update")
+    public String updateGroup(@ModelAttribute("group") Group group,
+                              @RequestParam(value = "memberNames", required = false) List<String> names,
+                              @RequestParam(value = "memberEmails", required = false) List<String> emails) {
+
+        groupService.updateExistingGroup(group.getGroupId(), group.getGroupName(), names, emails);
+
+        return "redirect:/groups/view/" + group.getGroupId();
+    }
+
+    @PostMapping("/delete/{id}")
+    public String deleteGroup(@PathVariable Long id) {
+        groupService.deleteGroup(id);
+        return "redirect:/groups/dashboard";
+    }
 }

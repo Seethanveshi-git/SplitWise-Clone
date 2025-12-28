@@ -31,19 +31,16 @@ public class GroupService {
         group.setCreatedBy(creator);
         Group savedGroup = groupRepository.save(group);
 
-        // 🔹 Creator as member
         Member admin = new Member();
         admin.setUser(creator);
         admin.setGroup(savedGroup);
         admin.setDisplayName(creator.getUsername());
         admin.setInvitedEmail(creator.getEmail());
-        admin.setSTATUS("ACCEPTED");
+        admin.setStatus("ACCEPTED");
 
         savedGroup.getMembers().add(admin);
 
-        // 🔹 Other members
         for (int i = 0; i < emails.size(); i++) {
-
             String email = emails.get(i);
             String name = names.get(i);
 
@@ -54,13 +51,14 @@ public class GroupService {
             member.setDisplayName(name);
             member.setInvitedEmail(email);
 
-            userRepository.findByEmail(email).ifPresentOrElse(
-                    user -> {
-                        member.setUser(user);
-                        member.setSTATUS("ACCEPTED");
-                    },
-                    () -> member.setSTATUS("INVITED")
-            );
+            Optional<User> user = userRepository.findByEmail(email);
+            if(user.isPresent()){
+                member.setUser(user.get());
+                member.setStatus("ACCEPTED");
+            }
+            else{
+                member.setStatus("INVITED");
+            }
 
             savedGroup.getMembers().add(member);
         }
@@ -74,7 +72,58 @@ public class GroupService {
 
     public Group findById(Long id){
         Group group = groupRepository.findById(id).get();
-
         return group;
+    }
+
+    public void updateExistingGroup(Long groupId, String newName, List<String> names, List<String> emails) {
+        Group existingGroup = groupRepository.findById(groupId)
+                .orElseThrow(() -> new RuntimeException("Group not found"));
+
+        existingGroup.setGroupName(newName);
+
+        User creator = existingGroup.getCreatedBy();
+
+        existingGroup.getMembers().clear();
+
+        Member admin = new Member();
+        admin.setUser(creator);
+        admin.setGroup(existingGroup);
+        admin.setDisplayName(creator.getUsername());
+        admin.setInvitedEmail(creator.getEmail());
+        admin.setStatus("ACCEPTED");
+        existingGroup.getMembers().add(admin);
+        if (emails != null) {
+            for (int i = 0; i < emails.size(); i++) {
+                String email = emails.get(i);
+                String name = names.get(i);
+
+                if (email == null || email.isBlank() || email.equals(creator.getEmail())) continue;
+
+                Member member = new Member();
+                member.setGroup(existingGroup);
+                member.setDisplayName(name);
+                member.setInvitedEmail(email);
+
+                Optional<User> user = userRepository.findByEmail(email);
+                if(user.isPresent()){
+                    member.setUser(user.get());
+                    member.setStatus("ACCEPTED");
+                }
+                else {
+                    member.setStatus("INVITED");
+                }
+
+                existingGroup.getMembers().add(member);
+            }
+        }
+        groupRepository.save(existingGroup);
+    }
+
+    public void deleteGroup(Long id) {
+        if (groupRepository.existsById(id)) {
+            groupRepository.deleteById(id);
+        } else {
+            throw new RuntimeException("Group not found with id: " + id);
+        }
     }
 }

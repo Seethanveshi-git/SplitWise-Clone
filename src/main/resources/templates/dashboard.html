@@ -8,30 +8,63 @@
         :root { --sw-teal: #1cc29f; --sw-orange: #ff6533; --sw-border: #ddd; }
         body { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; height: 100vh; overflow: hidden; }
 
-        /* Top Navbar */
+
         .sw-navbar { background-color: var(--sw-teal); color: white; padding: 5px 20px; height: 45px; }
 
-        /* Layout Sections */
+
         .sidebar { background-color: #f8f9fa; border-right: 1px solid var(--sw-border); height: calc(100vh - 45px); overflow-y: auto; }
         .main-content { height: calc(100vh - 45px); overflow-y: auto; border-right: 1px solid var(--sw-border); }
         .right-panel { height: calc(100vh - 45px); overflow-y: auto; padding: 20px; }
 
-        /* Sidebar Styling */
+
         .nav-item-custom { padding: 8px 15px; color: #666; text-decoration: none; display: block; font-size: 14px; }
         .nav-item-custom:hover { background-color: #eee; }
         .nav-item-custom.active { border-left: 4px solid var(--sw-teal); color: var(--sw-teal); font-weight: bold; }
         .section-header { background: #eee; padding: 5px 15px; font-size: 11px; font-weight: bold; color: #999; text-transform: uppercase; }
 
-        /* Splitwise Colors */
+
         .btn-orange { background-color: var(--sw-orange); color: white; border: none; font-weight: bold; }
         .btn-teal { background-color: var(--sw-teal); color: white; border: none; font-weight: bold; }
         .text-teal { color: var(--sw-teal); }
         .text-orange { color: var(--sw-orange); }
 
-        /* Expense Row */
         .expense-row { border-bottom: 1px solid #eee; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
         .date-box { font-size: 11px; color: #999; text-align: center; width: 40px; margin-right: 15px; }
-    </style>
+        <style>
+
+        .tab-switch { display: none; }
+
+        .tab-labels { border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 15px; display: flex; }
+        .tab-label {
+            background: #eee; border: 1px solid #ccc; border-radius: 4px;
+            padding: 2px 8px; color: #666; cursor: pointer; margin-right: 2px;
+            font-size: 14px;
+        }
+        .tab-label:hover { background: #e0e0e0; }
+
+        .tab-content { display: none; }
+
+        #radio-balances:checked ~ .tab-content#content-balances,
+        #radio-trends:checked ~ .tab-content#content-trends,
+        #radio-settings:checked ~ .tab-content#content-settings {
+            display: block;
+        }
+
+        /* 4. Active state for buttons (adds the teal underline) */
+        #radio-balances:checked ~ .tab-labels label[for="radio-balances"],
+        #radio-calendar:checked ~ .tab-labels label[for="radio-calendar"],
+        #radio-trends:checked ~ .tab-labels label[for="radio-trends"],
+        #radio-whiteboard:checked ~ .tab-labels label[for="radio-whiteboard"],
+        #radio-settings:checked ~ .tab-labels label[for="radio-settings"] {
+            background: #fff;
+            border-bottom: 1px solid transparent;
+            box-shadow: 0 2px 0 var(--sw-teal);
+        }
+
+        .panel-section-title { font-size: 11px; font-weight: bold; color: #999; text-transform: uppercase; margin-bottom: 12px; }
+        .whiteboard-box { border: 1px solid #ccc; padding: 10px; background: #fff; font-size: 13px; color: #999; min-height: 60px; }
+        .setting-btn { width: 100%; text-align: left; margin-bottom: 5px; font-size: 13px; background: #f8f9fa; border: 1px solid #ddd; padding: 5px 10px; border-radius: 4px;}
+        </style>
 </head>
 <body>
 
@@ -130,20 +163,41 @@
 
         <div class="col-md-3 right-panel">
             <div th:if="${view == 'details'}">
-                <h6 class="text-muted small fw-bold uppercase mb-3">GROUP MEMBERS</h6>
-                <div class="mb-3" th:each="member : ${selectedGroup.members}">
-                    <div class="d-flex align-items-center mb-2">
-                        <div class="bg-light border rounded-circle p-2 me-2">
+
+                <input type="radio" name="right-nav" id="radio-balances" class="tab-switch" checked>
+                <input type="radio" name="right-nav" id="radio-trends" class="tab-switch">
+                <input type="radio" name="right-nav" id="radio-settings" class="tab-switch">
+
+                <div class="tab-labels">
+                    <label for="radio-balances" class="tab-label">☰</label>
+                    <label for="radio-trends" class="tab-label">📊</label>
+                    <label for="radio-settings" class="tab-label">⚙️</label>
+                </div>
+
+                <div id="content-balances" class="tab-content">
+                    <h6 class="panel-section-title">GROUP BALANCES</h6>
+                    <div th:each="member : ${selectedGroup.members}" class="d-flex align-items-center mb-2">
+                        <div class="bg-light border rounded-circle p-2 me-2" style="width: 35px; height: 35px; text-align: center; line-height: 1;">
                             <span th:text="${member.user != null ? '👤' : '✉️'}"></span>
                         </div>
                         <div>
-                            <div class="small fw-bold" th:text="${member.displayName}">Member Name</div>
-                            <div class="small text-muted" th:if="${member.user == null}">
-                                (Not registered)
-                            </div>
+                            <div class="small fw-bold" th:text="${member.displayName}">Member</div>
+                            <div class="small text-muted">settled up</div>
                         </div>
                     </div>
                 </div>
+                <div id="content-trends" class="tab-content">
+                    <h6 class="panel-section-title">TRENDS THIS MONTH</h6>
+                    <div class="small mb-1 d-flex justify-content-between"><span>Total you paid for</span> <span class="text-teal">₹0.00</span></div>
+                    <div class="small mb-1 d-flex justify-content-between"><span>Your total share</span> <span class="text-orange">₹0.00</span></div>
+                </div>
+                <div id="content-settings" class="tab-content">
+                    <h6 class="panel-section-title">GROUP SETTINGS</h6>
+                    <a th:href="@{/groups/edit/{id}(id=${selectedGroup.groupId})}" class="btn setting-btn">
+                        Edit group settings
+                    </a>
+                </div>
+
             </div>
         </div>
             <div th:if="${view == 'create'}" class="text-center mt-5">
