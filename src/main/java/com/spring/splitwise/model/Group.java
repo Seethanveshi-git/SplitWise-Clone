@@ -7,11 +7,11 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.management.ConstructorParameters;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Setter
-
 @Entity
 @Table(name= "groups")
 public class Group {
@@ -19,13 +19,12 @@ public class Group {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long groupId;
 
-    @Column(nullable = false)
     private String groupName;
 
     private String groupDescription;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "created_by", nullable = false)
     private User createdBy;
 
     @CreationTimestamp
@@ -39,7 +38,6 @@ public class Group {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    private List<Member> members;
-
+    private List<Member> members = new ArrayList<>();
 
 }

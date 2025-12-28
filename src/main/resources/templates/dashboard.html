@@ -1,293 +1,157 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Splitwise Dashboard</title>
+    <title>Splitwise - Clone</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
-}
+        :root { --sw-teal: #1cc29f; --sw-orange: #ff6533; --sw-border: #ddd; }
+        body { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; height: 100vh; overflow: hidden; }
 
-body {
-    background-color: #f5f5f5;
-}
+        /* Top Navbar */
+        .sw-navbar { background-color: var(--sw-teal); color: white; padding: 5px 20px; height: 45px; }
 
-/* Top Navbar */
-.topbar {
-    height: 60px;
-    background-color: #5bc5a7;
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 30px;
-}
+        /* Layout Sections */
+        .sidebar { background-color: #f8f9fa; border-right: 1px solid var(--sw-border); height: calc(100vh - 45px); overflow-y: auto; }
+        .main-content { height: calc(100vh - 45px); overflow-y: auto; border-right: 1px solid var(--sw-border); }
+        .right-panel { height: calc(100vh - 45px); overflow-y: auto; padding: 20px; }
 
-.logo {
-    font-size: 22px;
-    font-weight: bold;
-}
+        /* Sidebar Styling */
+        .nav-item-custom { padding: 8px 15px; color: #666; text-decoration: none; display: block; font-size: 14px; }
+        .nav-item-custom:hover { background-color: #eee; }
+        .nav-item-custom.active { border-left: 4px solid var(--sw-teal); color: var(--sw-teal); font-weight: bold; }
+        .section-header { background: #eee; padding: 5px 15px; font-size: 11px; font-weight: bold; color: #999; text-transform: uppercase; }
 
-.nav-links a {
-    color: white;
-    margin: 0 10px;
-    text-decoration: none;
-}
+        /* Splitwise Colors */
+        .btn-orange { background-color: var(--sw-orange); color: white; border: none; font-weight: bold; }
+        .btn-teal { background-color: var(--sw-teal); color: white; border: none; font-weight: bold; }
+        .text-teal { color: var(--sw-teal); }
+        .text-orange { color: var(--sw-orange); }
 
-.profile {
-    cursor: pointer;
-}
-
-/* Layout */
-.container {
-    display: flex;
-}
-
-/* Sidebar */
-.sidebar {
-    width: 220px;
-    background: #ffffff;
-    padding: 20px;
-    min-height: calc(100vh - 60px);
-    border-right: 1px solid #ddd;
-}
-
-.sidebar ul {
-    list-style: none;
-    margin-bottom: 20px;
-}
-
-.sidebar li {
-    padding: 8px 0;
-    cursor: pointer;
-}
-
-.sidebar .active {
-    font-weight: bold;
-    color: #5bc5a7;
-}
-
-.sidebar h4 {
-    margin: 15px 0 5px;
-    font-size: 14px;
-    color: #777;
-}
-
-/* Main Content */
-.main-content {
-    flex: 1;
-    padding: 25px;
-}
-
-/* Dashboard Header */
-.dashboard-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.actions .btn {
-    padding: 8px 14px;
-    border: none;
-    cursor: pointer;
-    border-radius: 4px;
-    margin-left: 10px;
-}
-
-.btn.add {
-    background: #ff8c5a;
-    color: white;
-}
-
-.btn.settle {
-    background: #5bc5a7;
-    color: white;
-}
-
-/* Summary Cards */
-.summary {
-    display: flex;
-    gap: 20px;
-    margin: 25px 0;
-}
-
-.card {
-    background: white;
-    padding: 20px;
-    width: 200px;
-    border-radius: 6px;
-    box-shadow: 0 0 5px rgba(0,0,0,0.05);
-}
-
-.card p {
-    color: #777;
-    margin-bottom: 5px;
-}
-
-.positive {
-    color: #2ecc71;
-}
-
-/* Owe Section */
-.owe-section {
-    display: flex;
-    gap: 40px;
-    margin-top: 20px;
-}
-
-.owe-box {
-    background: white;
-    padding: 20px;
-    width: 300px;
-    border-radius: 6px;
-}
-
-.friend {
-    display: flex;
-    justify-content: space-between;
-    margin: 10px 0;
-}
-
-.muted {
-    color: #888;
-}
-
-/* Activity */
-.activity {
-    margin-top: 30px;
-    background: white;
-    padding: 20px;
-    border-radius: 6px;
-}
-
-.activity-item {
-    padding: 10px 0;
-    border-bottom: 1px solid #eee;
-}
-
-.activity-item:last-child {
-    border-bottom: none;
-}
-
+        /* Expense Row */
+        .expense-row { border-bottom: 1px solid #eee; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .date-box { font-size: 11px; color: #999; text-align: center; width: 40px; margin-right: 15px; }
     </style>
 </head>
 <body>
 
-<!-- Top Navbar -->
-<header class="topbar">
-    <div class="logo">Splitwise</div>
-    <nav class="nav-links">
-        <a href="#">Dashboard</a>
-        <a href="#">Groups</a>
-        <a href="#">Friends</a>
-        <a href="#">Expenses</a>
-    </nav>
-    <div class="profile">Jaan ⌄</div>
-</header>
+<nav class="sw-navbar d-flex justify-content-between align-items-center">
+    <div class="fw-bold fs-5">Splitwise</div>
+    <div class="dropdown">
+        <span class="dropdown-toggle cursor-pointer" th:text="${user.username}">User</span>
+    </div>
+</nav>
 
-<div class="container">
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2 sidebar p-0">
+            <a th:href="@{/dashboard}" class="nav-item-custom" th:classappend="${view == 'dashboard' ? 'active' : ''}">🏁 Dashboard</a>
+            <a href="#" class="nav-item-custom">🚩 Recent activity</a>
+            <div class="p-2"><input type="text" class="form-control form-control-sm" placeholder="Filter by name"></div>
+            <a href="#" class="nav-item-custom">📑 All expenses</a>
 
-    <!-- Sidebar -->
-    <aside class="sidebar">
-        <ul>
-            <li class="active">Dashboard</li>
-            <li>Recent Activity</li>
-            <li>All Expenses</li>
-        </ul>
+            <div class="section-header d-flex justify-content-between">
+                <span>Groups</span>
+                <a th:href="@{/groups/newgroup}" class="text-muted text-decoration-none">+ add</a>
+            </div>
+            <div th:each="m : ${user.memberships}">
+                <a th:href="@{/groups/view/{id}(id=${m.group.groupId})}"
+                   class="nav-item-custom"
+                   th:classappend="${selectedGroup != null && selectedGroup.groupId == m.group.groupId ? 'active' : ''}"
+                   th:text="'🏷 ' + ${m.group.groupName}"></a>
+            </div>
 
-        <h4>Groups</h4>
-        <ul>
-            <li>Room</li>
-            <li>Trip</li>
-        </ul>
-
-        <h4>Friends</h4>
-        <ul>
-            <li>Mahesh</li>
-            <li>Manoj</li>
-            <li>Yashwanth</li>
-        </ul>
-    </aside>
-
-    <!-- Main Content -->
-    <main class="main-content">
-
-        <!-- Dashboard Header -->
-        <div class="dashboard-header">
-            <h2>Dashboard</h2>
-            <div class="actions">
-                <button class="btn add">Add an expense</button>
-                <button class="btn settle">Settle up</button>
+            <div class="section-header mt-3 d-flex justify-content-between">
+                <span>Friends</span>
+                <a href="#" class="text-muted text-decoration-none">+ add</a>
+            </div>
+            <div th:each="f : ${user.friends}">
+<!--                <a href="#" class="nav-item-custom" th:text="'👤 ' + ${f.friend.username}"></a>-->
             </div>
         </div>
 
-        <!-- Balance Summary -->
-        <div class="summary">
-            <div class="card">
-                <p>Total balance</p>
-                <h3 class="positive">+ ₹1232.33</h3>
-            </div>
-            <div class="card">
-                <p>You owe</p>
-                <h3>₹0.00</h3>
-            </div>
-            <div class="card">
-                <p>You are owed</p>
-                <h3 class="positive">₹1232.33</h3>
-            </div>
-        </div>
+        <div class="col-md-7 main-content p-0">
 
-        <!-- Owe Sections -->
-        <div class="owe-section">
-
-            <div class="owe-box">
-                <h3>You owe</h3>
-                <p class="muted">You do not owe anything 🎉</p>
-            </div>
-
-            <div class="owe-box">
-                <h3>You are owed</h3>
-
-                <div class="friend">
-                    <span>Mahesh</span>
-                    <span class="positive">₹617.33</span>
+            <div th:if="${view == 'dashboard'}">
+                <div class="d-flex justify-content-between align-items-center p-3 border-bottom bg-light">
+                    <h4 class="mb-0">Dashboard</h4>
+                    <div>
+                        <button class="btn btn-orange btn-sm px-3">Add an expense</button>
+                        <button class="btn btn-teal btn-sm px-3">Settle up</button>
+                    </div>
                 </div>
-
-                <div class="friend">
-                    <span>Manoj</span>
-                    <span class="positive">₹365.00</span>
+                <div class="row m-0 text-center border-bottom bg-white shadow-sm">
+                    <div class="col-4 border-end py-3"><small class="text-muted uppercase">total balance</small><br><span class="text-orange">- ₹95.00</span></div>
+                    <div class="col-4 border-end py-3"><small class="text-muted uppercase">you owe</small><br><span class="text-orange">₹95.00</span></div>
+                    <div class="col-4 py-3"><small class="text-muted uppercase">you are owed</small><br><span>₹0.00</span></div>
                 </div>
-
-                <div class="friend">
-                    <span>Yashwanth</span>
-                    <span class="positive">₹250.00</span>
+                <div class="p-4 row">
+                    <div class="col-6 border-end">
+                        <h6 class="text-muted mb-3">YOU OWE</h6>
+                        <div class="d-flex align-items-start mb-3">
+                            <div class="bg-secondary rounded-circle text-white p-2 me-2">👤</div>
+                            <div>
+                                <div class="fw-bold small">Jnanadeep</div>
+                                <div class="text-orange small">you owe ₹95.00</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <h6 class="text-muted mb-3 text-end">YOU ARE OWED</h6>
+                        <p class="text-muted small text-end">You are not owed anything</p>
+                    </div>
                 </div>
             </div>
 
+            <div th:if="${view == 'details'}">
+                <div class="d-flex justify-content-between align-items-center p-3 border-bottom bg-light">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-secondary text-white rounded p-2 me-2">✈️</div>
+                        <h4 class="mb-0" th:text="${selectedGroup.groupName}">Group Name</h4>
+                    </div>
+                    <div>
+                        <button class="btn btn-orange btn-sm px-3">Add an expense</button>
+                        <button class="btn btn-teal btn-sm px-3">Settle up</button>
+                    </div>
+                </div>
+                <div class="expense-row">
+                    <div class="d-flex align-items-center">
+                        <div class="date-box">DEC<br><span class="fs-5">27</span></div>
+                        <div class="bg-light p-2 me-2 border">🎬</div>
+                        <div class="fw-bold">movie</div>
+                    </div>
+                    <div class="d-flex text-end">
+                        <div class="me-4 small text-muted">Jnanadeep paid<br><span class="text-dark fw-bold">₹200.00</span></div>
+                        <div class="small text-muted">you lent<br><span class="text-teal fw-bold">₹100.00</span></div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <!-- Recent Activity -->
-        <div class="activity">
-            <h3>Recent Activity</h3>
-
-            <div class="activity-item">
-                You paid ₹500 for Dinner (Room)
-            </div>
-
-            <div class="activity-item">
-                Manoj paid ₹300 for Groceries
-            </div>
-
-            <div class="activity-item">
-                Mahesh owes you ₹200
+        <div class="col-md-3 right-panel">
+            <div th:if="${view == 'details'}">
+                <h6 class="text-muted small fw-bold uppercase mb-3">GROUP MEMBERS</h6>
+                <div class="mb-3" th:each="member : ${selectedGroup.members}">
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="bg-light border rounded-circle p-2 me-2">
+                            <span th:text="${member.user != null ? '👤' : '✉️'}"></span>
+                        </div>
+                        <div>
+                            <div class="small fw-bold" th:text="${member.displayName}">Member Name</div>
+                            <div class="small text-muted" th:if="${member.user == null}">
+                                (Not registered)
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-
-    </main>
+            <div th:if="${view == 'create'}" class="text-center mt-5">
+                <img src="https://via.placeholder.com/150" class="mb-3">
+                <p class="small text-muted">Subscribe to Splitwise Pro for no ads and more features!</p>
+            </div>
+        </div>
+    </div>
 </div>
-
 </body>
 </html>
