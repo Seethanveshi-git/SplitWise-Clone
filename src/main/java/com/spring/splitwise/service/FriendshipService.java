@@ -25,11 +25,11 @@ public class FriendshipService {
         User friend = userRepository.findById(friendUserId)
                 .orElseThrow(()->new RuntimeException("Friend not found"));
 
-        Friendship friendship = friendshipRepository.findByRequesterAndReceiver(user, friend)
+        Friendship friendship = friendshipRepository.findByUserAndFriend(user, friend)
                 .orElseThrow(()->new RuntimeException("Friendship not found"));
 
-        friendshipRepository.deleteByRequesterAndReceiver(user, friend);
-        friendshipRepository.deleteByRequesterAndReceiver(friend, user);
+        friendshipRepository.deleteByUserAndFriend(user, friend);
+        friendshipRepository.deleteByUserAndFriend(friend, user);
     }
 
 
