@@ -1,41 +1,41 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-    <body>
+<!--<!DOCTYPE html>-->
+<!--<html xmlns:th="http://www.thymeleaf.org">-->
+<!--    <body>-->
 
-        <aside class="sidebar" th:fragment="sidebar">
+<!--        <aside class="sidebar" th:fragment="sidebar">-->
 
-            <ul>
-                <li><a th:href="@{/dashboard}">Dashboard</a></li>
-                <li><a th:href="@{/activity}">Recent Activity</a></li>
-                <li><a th:href="@{/expenses}">All Expenses</a></li>
-            </ul>
+<!--            <ul>-->
+<!--                <li><a th:href="@{/dashboard}">Dashboard</a></li>-->
+<!--                <li><a th:href="@{/activity}">Recent Activity</a></li>-->
+<!--                <li><a th:href="@{/expenses}">All Expenses</a></li>-->
+<!--            </ul>-->
 
-            <h4>
-                Groups
-                <a th:href="@{/groups/create}">+</a>
-            </h4>
-            <ul>
-                <li th:each="g : ${groups}">
-                    <a th:href="@{/groups/{id}(id=${g.id})}"
-                       th:text="${g.name}">Group</a>
-                </li>
-            </ul>
+<!--            <h4>-->
+<!--                Groups-->
+<!--                <a th:href="@{/groups/create}">+</a>-->
+<!--            </h4>-->
+<!--            <ul>-->
+<!--                <li th:each="g : ${groups}">-->
+<!--                    <a th:href="@{/groups/{id}(id=${g.id})}"-->
+<!--                       th:text="${g.name}">Group</a>-->
+<!--                </li>-->
+<!--            </ul>-->
 
-            <h4>
-                Friends
-                <button onclick="openFriendModal()">+</button>
-            </h4>
+<!--            <h4>-->
+<!--                Friends-->
+<!--                <button onclick="openFriendModal()">+</button>-->
+<!--            </h4>-->
 
-            <ul>
-                <li th:each="f : ${friends}">
-                    <a th:href="@{/dashboard(friendId=${f.friend.id})}">
-                        <span th:text="${f.friend.username}"></span>
-                        <span th:if="${f.status == 'PENDING'}">(Pending)</span>
-                    </a>
-                </li>
-            </ul>
+<!--            <ul>-->
+<!--                <li th:each="f : ${friends}">-->
+<!--                    <a th:href="@{/dashboard(friendId=${f.friend.id})}">-->
+<!--                        <span th:text="${f.friend.username}"></span>-->
+<!--                        <span th:if="${f.status == 'PENDING'}">(Pending)</span>-->
+<!--                    </a>-->
+<!--                </li>-->
+<!--            </ul>-->
 
-        </aside>
+<!--        </aside>-->
 
-    </body>`
-</html>
+<!--    </body>`-->
+<!--</html>-->

@@ -23,7 +23,6 @@ public class DashboardController {
     @GetMapping("/dashboard")
     public String dashboard(@RequestParam(required = false) Long friendId, Model model) {
 
-        // TEMP way to get logged-in user (replace with Security later)
         User currentUser = userService.getByEmail("vikram@gmail.com");
 
         model.addAttribute("user", currentUser);
@@ -33,7 +32,6 @@ public class DashboardController {
             model.addAttribute("selectedFriend",selectedFriend);
         }
 
-        // calculate later
         return "dashboard";
     }
 }

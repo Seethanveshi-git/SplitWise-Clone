@@ -24,37 +24,38 @@ public class FriendshipController {
         this.userRepository = userRepository;
     }
 
+    private User getCurrentUser() {
+        return userRepository.findById(1L)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
     @GetMapping
     public String friendList(Model model){
-        User currentUser = new User();
-
-        model.addAttribute("friends",friendshipService.getFriends(currentUser)) ;
+        User currentUser = userRepository.findById(1L).get();
+        model.addAttribute("friends", friendshipService.getFriends(currentUser));
         return "dashboard";
     }
 
-//    @GetMapping("/{friendId}")
-//    public String viewFriend(@PathVariable Long friendId, Model model) {
-//
-//        // TEMP user (until Spring Security)
-//        User currentUser = userRepository.findById(1L)
-//                .orElseThrow(() -> new RuntimeException("User not found"));
-//
-//        // Selected friend
-//        User selectedFriend = userRepository.findById(friendId)
-//                .orElseThrow(() -> new RuntimeException("Friend not found"));
-//
-//        // Friendship relation
-//        Friendship friendship = friendshipRepository
-//                .findByUserAndFriend(currentUser, selectedFriend)
-//                .orElse(null);
-//
-//        model.addAttribute("user", currentUser);
-//        model.addAttribute("friends", friendshipService.getFriends(currentUser));
-//        model.addAttribute("selectedFriend", selectedFriend);
-//        model.addAttribute("friendship", friendship);
-//
-//        return "dashboard";
-//    }
+    @GetMapping("/{friendId}")
+    public String viewFriend(@PathVariable Long friendId, Model model) {
+
+        User currentUser = getCurrentUser();
+
+        User selectedFriend = userRepository.findById(friendId)
+                .orElseThrow(() -> new RuntimeException("Friend not found"));
+
+        Friendship friendship = friendshipRepository
+                .findByUserAndFriend(currentUser, selectedFriend)
+                .orElse(null);
+
+        model.addAttribute("user", currentUser);
+        model.addAttribute("friends", friendshipService.getFriends(currentUser));
+        model.addAttribute("selectedFriend", selectedFriend);
+        model.addAttribute("friendship", friendship);
+        model.addAttribute("view", "friend");
+
+        return "dashboard";
+    }
 
     @PostMapping("/invite")
     public String inviteFriend(@RequestParam String email,
@@ -70,9 +71,17 @@ public class FriendshipController {
     }
 
     @PostMapping("/remove/{id}")
-    public String removeFriend(@PathVariable Long id) {
-        friendshipService.removeFriend(id);
-        return "redirect:/friends";
+    public String removeFriend(@PathVariable Long id,
+                               RedirectAttributes redirectAttributes) {
+
+        friendshipService.removeFriendByFriendshipId(id);
+
+        redirectAttributes.addFlashAttribute(
+                "successMessage",
+                "Friend removed successfully"
+        );
+
+        return "redirect:/dashboard";
     }
 
 
@@ -82,29 +91,39 @@ public class FriendshipController {
         Friendship friendship = friendshipService.getPendingRequestForEdit(id);
 
         model.addAttribute("friendship", friendship);
-        return "edit-friend";
+        model.addAttribute("friend", friendship.getFriend());
+        return "edit-friend-info";
     }
 
     @PostMapping("/edit")
     public String editFriendRequest(@RequestParam Long friendId,
+                                    @RequestParam String name,
                                     @RequestParam String email) {
 
-        friendshipService.editFriend(friendId, email);
+        friendshipService.editFriend(friendId, name, email);
 
-        return "redirect:/friends";
+        return "redirect:/dashboard";
     }
 
+
     @PostMapping("/resend/{id}")
-    public String resendInvite(@PathVariable Long id,
-                               RedirectAttributes redirectAttributes) {
+    public String resendInvite(@PathVariable Long id, Model model) {
+
+        Friendship friendship = friendshipService.getPendingRequestForEdit(id);
 
         friendshipService.resendInvite(id);
 
-        redirectAttributes.addFlashAttribute(
-                "successMessage",
-                "Invite sent successfully"
-        );
+        User currentUser = friendship.getUser();
+        User selectedFriend = friendship.getFriend();
 
-        return "redirect:/friends";
+        model.addAttribute("user", currentUser);
+        model.addAttribute("friends", friendshipService.getFriends(currentUser));
+        model.addAttribute("selectedFriend", selectedFriend);
+        model.addAttribute("friendship", friendship);
+        model.addAttribute("view", "friend");
+
+        model.addAttribute("successMessage", "Invite sent successfully");
+
+        return "dashboard";
     }
 }

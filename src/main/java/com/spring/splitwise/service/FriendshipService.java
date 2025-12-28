@@ -17,13 +17,14 @@ public class FriendshipService {
     private FriendshipRepository friendshipRepository;
     private UserRepository userRepository;
 
+
     public FriendshipService(FriendshipRepository friendshipRepository, UserRepository userRepository) {
         this.friendshipRepository = friendshipRepository;
         this.userRepository = userRepository;
     }
 
     public List<Friendship> getFriends(User currentUser) {
-        return friendshipRepository.findByUserId(currentUser.getId());
+        return friendshipRepository.findByUserIdOrderByFriend_UsernameAsc(currentUser.getId());
     }
 
     public String inviteFriend(User currentUser, String email) {
@@ -39,18 +40,12 @@ public class FriendshipService {
             status = "ACTIVE";
 
         } else {
-            // INVITED USER (THIS IS WHERE YOUR CODE GOES)
-
             friend = new User();
             friend.setEmail(email);
             friend.setUsername(email.split("@")[0]);
-
             friend.setPassword("password123");
-
             friend.setActive(false);
-
             friend = userRepository.save(friend);
-
             status = "PENDING";
         }
         if (friendshipRepository.existsByUserAndFriend(currentUser, friend)) {
@@ -95,7 +90,7 @@ public class FriendshipService {
         return friendship;
     }
 
-    public void editFriend(Long friendId, String email) {
+    public void editFriend(Long friendId,String name, String email) {
 
         Friendship friendship = friendshipRepository.findById(friendId)
                 .orElseThrow(() -> new RuntimeException("Request not found"));
@@ -103,25 +98,16 @@ public class FriendshipService {
         if (!friendship.getStatus().equals("PENDING")) {
             throw new RuntimeException("Edit not allowed");
         }
+//        if (emailAlreadyExistsForAnotherUser(email)) {
+//            throw new RuntimeException("Email already in use");
+//        }
 
-        User user = friendship.getUser();
+        User friend = friendship.getFriend();
 
-        friendshipRepository.delete(friendship);
+        friend.setEmail(email);
+        friend.setUsername(name);
 
-        User friend = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        if (user.getId().equals(friend.getId())) {
-            throw new RuntimeException("Cannot send request to yourself");
-        }
-
-        Friendship newRequest = new Friendship();
-        newRequest.setUser(user);
-        newRequest.setFriend(friend);
-        newRequest.setStatus("PENDING");
-        newRequest.setCreatedAt(LocalDateTime.now());
-
-        friendshipRepository.save(newRequest);
+        userRepository.save(friend);
     }
 
     public void resendInvite(Long friendshipId) {
@@ -133,8 +119,20 @@ public class FriendshipService {
             throw new RuntimeException("Edit not allowed");
         }
 
-        // Optional: update timestamp to indicate resend
         friendship.setCreatedAt(LocalDateTime.now());
         friendshipRepository.save(friendship);
+    }
+
+    public void removeFriendByFriendshipId(Long id) {
+        Friendship friendship = friendshipRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Friendship not found"));
+
+        User user = friendship.getUser();
+        User friend = friendship.getFriend();
+
+        friendshipRepository.delete(friendship);
+
+        friendshipRepository.findByUserAndFriend(friend, user)
+                .ifPresent(friendshipRepository::delete);
     }
 }
