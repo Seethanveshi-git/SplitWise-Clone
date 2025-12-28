@@ -25,6 +25,7 @@ public class User {
     @Column(unique = true, nullable = false)
     private String email;
 
+    @Column(nullable = false)
     private String password;
 
     @CreationTimestamp
@@ -40,5 +41,8 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Member> memberships;
+
+    @Column(nullable = false)
+    private boolean active = true; // false = invited, true = real user
 
 }

@@ -34,6 +34,8 @@ public class Member {
     @CreationTimestamp
     private LocalDateTime joinedAt;
 
+    @Column(nullable = false)
     private String status = "PENDING";
+
 }
 
