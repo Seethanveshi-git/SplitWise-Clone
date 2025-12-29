@@ -178,7 +178,7 @@
                     <h6 class="panel-section-title">GROUP BALANCES</h6>
                     <div th:each="member : ${selectedGroup.members}" class="d-flex align-items-center mb-2">
                         <div class="bg-light border rounded-circle p-2 me-2" style="width: 35px; height: 35px; text-align: center; line-height: 1;">
-                            <span th:text="${member.user != null ? '👤' : '✉️'}"></span>
+                            <span th:text="${member.user.active ? '👤' : '✉️'}"></span>
                         </div>
                         <div>
                             <div class="small fw-bold" th:text="${member.displayName}">Member</div>
