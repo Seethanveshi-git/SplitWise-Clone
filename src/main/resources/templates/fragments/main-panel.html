@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+  <div th:fragment="mainPanel">
+
+    <main class="main">
+
+      <section th:if="${view == 'dashboard'}">
+
+        <div class="dashboard-header">
+          <h2>Dashboard</h2>
+          <div class="actions">
+            <button class="btn-orange">Add an expense</button>
+            <button class="btn-teal">Settle up</button>
+          </div>
+        </div>
+
+        <div class="summary-bar">
+          <div class="summary-item">
+            <small>total balance</small>
+            <strong class="text-orange">-₹3367.67</strong>
+          </div>
+          <div class="summary-item">
+            <small>you owe</small>
+            <strong class="text-orange">₹4900.00</strong>
+          </div>
+          <div class="summary-item">
+            <small>you are owed</small>
+            <strong class="text-teal">₹1532.33</strong>
+          </div>
+        </div>
+
+        <div class="balances">
+          <div class="balances-col">
+            <h4>YOU OWE</h4>
+
+            <div class="balance-row negative">
+              <span>Seethanveshi</span>
+              <strong>₹4900.00</strong>
+            </div>
+          </div>
+
+          <div class="balances-col">
+            <h4>YOU ARE OWED</h4>
+
+            <div class="balance-row positive">
+              <span>Mahesh (Vit)</span>
+              <strong>₹617.33</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="empty-state">
+          <p>No expenses yet</p>
+          <small>Start by adding an expense</small>
+        </div>
+
+      </section>
+
+      <!-- ================= GROUP VIEW (MAIN PANEL ONLY) ================= -->
+      <section th:if="${view == 'details'}">
+
+        <!-- Group Header -->
+        <header class="group-header">
+          <div class="group-title">
+            <div class="group-icon">🏠</div>
+            <div>
+              <h2 th:text="${selectedGroup.groupName}">Room</h2>
+              <small th:text="${#lists.size(selectedGroup.members)} + ' people'">
+                4 people
+              </small>
+            </div>
+          </div>
+
+          <div class="group-actions">
+            <button class="btn-orange">Add an expense</button>
+            <button class="btn-teal">Settle up</button>
+          </div>
+        </header>
+
+        <!-- Expense Timeline -->
+        <div class="group-expenses">
+
+          <!-- Month Header -->
+          <div class="month-header">
+            DECEMBER 2025
+          </div>
+
+          <!-- Expense Row -->
+          <div class="expense-row">
+            <div class="expense-left">
+              <div class="date-box">
+                <span class="month">DEC</span>
+                <span class="day">27</span>
+              </div>
+              <div class="expense-icon">🎬</div>
+              <div class="expense-title">Movie</div>
+            </div>
+
+            <div class="expense-right">
+              <div class="expense-info">
+                <small>You paid</small>
+                <strong>₹200.00</strong>
+              </div>
+              <div class="expense-info positive">
+                <small>You lent</small>
+                <strong>₹100.00</strong>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- ================= FRIEND VIEW ================= -->
+      <section th:if="${view == 'friend'}">
+
+        <!-- Friend Header -->
+        <header class="friend-header">
+          <div class="friend-title">
+            <div class="friend-avatar">
+              <span th:text="${#strings.substring(selectedFriend.username,0,1)}">M</span>
+            </div>
+
+            <div>
+              <h2 th:text="${selectedFriend.username}">Mahesh (Vit)</h2>
+
+              <div class="friend-meta">
+                      <span th:if="${friendship.status == 'PENDING'}"
+                            class="badge pending">invite pending</span>
+
+                <small th:if="${friendship.status == 'PENDING'}">
+                  invited via email
+                </small>
+              </div>
+            </div>
+          </div>
+
+          <div class="friend-actions">
+            <button class="btn-orange">Add an expense</button>
+            <button class="btn-teal">Settle up</button>
+          </div>
+        </header>
+
+        <!-- Friend Expense Timeline -->
+        <div class="friend-expenses">
+
+          <div class="month-header">
+            DECEMBER 2025
+          </div>
+
+          <div class="expense-row">
+            <div class="expense-left">
+              <div class="date-box">
+                <span class="month">DEC</span>
+                <span class="day">27</span>
+              </div>
+
+              <div class="expense-icon">🏠</div>
+
+              <div class="expense-title">
+                <strong>Room</strong>
+                <small>One-on-one debt simplification</small>
+              </div>
+            </div>
+
+            <div class="expense-right">
+              <div class="expense-info">
+                <small>You paid</small>
+                <strong>₹617.33</strong>
+              </div>
+              <div class="expense-info positive">
+                <small>You lent</small>
+                <strong>₹617.33</strong>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+
+    </main>
+
+  </div>
+</body>
+</html>

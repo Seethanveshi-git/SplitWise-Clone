@@ -1,21 +1,19 @@
 package com.spring.splitwise.repository;
 
-import com.spring.splitwise.model.Friendship;
+import com.spring.splitwise.model.Friend;
 import com.spring.splitwise.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface FriendshipRepository extends JpaRepository<Friendship, Long>{
+public interface FriendRepository extends JpaRepository<Friend, Long>{
 
-    List<Friendship> findByUserIdOrderByFriend_UsernameAsc(Long userId);
+    List<Friend> findByUserIdOrderByFriend_UsernameAsc(Long userId);
 
-    Optional<Friendship> findByUserAndFriend(User user, User friend);
+    Optional<Friend> findByUserAndFriend(User user, User friend);
 
     void deleteByUserAndFriend(User user, User friend);
 

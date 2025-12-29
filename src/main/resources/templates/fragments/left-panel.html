@@ -1,0 +1,66 @@
+<div th:fragment="leftPanel">
+    <aside class="sidebar">
+
+        <!-- Top Nav -->
+        <nav class="sidebar-nav">
+            <a th:href="@{/dashboard}"
+               class="nav-item-custom"
+               th:classappend="${view == 'dashboard' ? 'active' : ''}">
+                <span class="icon">🏠</span>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="#"
+               class="nav-item-custom">
+                <span class="icon">🚩</span>
+                <span>Recent activity</span>
+            </a>
+        </nav>
+
+        <!-- Search -->
+        <div class="sidebar-search">
+            <input type="text" placeholder="Filter by name">
+        </div>
+
+        <a href="#" class="nav-item-custom muted">
+            <span class="icon">📋</span>
+            <span>All expenses</span>
+        </a>
+
+        <!-- Groups -->
+        <div class="section-header">
+            <span>GROUPS</span>
+            <a th:href="@{/groups/newgroup}" class="add-link">+ add</a>
+        </div>
+
+        <div th:each="m : ${user.members}">
+            <a th:href="@{/groups/view/{id}(id=${m.group.groupId})}"
+               class="nav-item-custom"
+               th:classappend="${selectedGroup != null && selectedGroup.groupId == m.group.groupId ? 'active' : ''}">
+                <span class="icon">🏷</span>
+                <span th:text="${m.group.groupName}">Group</span>
+            </a>
+        </div>
+
+        <!-- Friends -->
+        <div class="section-header">
+            <span>FRIENDS</span>
+            <a href="javascript:void(0)"
+               class="add-link"
+               onclick="openAddFriendPopup()">+ add</a>
+        </div>
+
+        <div th:each="f : ${friends}">
+            <a th:href="@{/friends/{id}(id=${f.friend.id})}"
+               class="nav-item-custom"
+               th:classappend="${selectedFriend != null && selectedFriend.id == f.friend.id ? 'active' : ''}">
+                <span class="icon">👤</span>
+                <span th:text="${f.friend.username}">Friend</span>
+
+                <span th:if="${f.status == 'PENDING'}"
+                      class="badge">pending</span>
+            </a>
+        </div>
+
+    </aside>
+</div>

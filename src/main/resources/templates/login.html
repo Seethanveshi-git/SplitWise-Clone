@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Splitwise - Log in</title>
+        <link rel="stylesheet" th:href="@{/css/login.css}">
+    </head>
+    <body>
+
+    <!-- HEADER -->
+    <header class="login-header">
+        <div class="logo">Splitwise</div>
+        <div class="header-actions">
+            <a href="/login">Log in</a>
+            <a href="/register" class="signup-btn">Sign up</a>
+        </div>
+    </header>
+
+    <!-- LOGIN CARD -->
+        <div class="login-wrapper">
+            <div class="login-card">
+
+                <h2>Log in</h2>
+
+                <form action="/login" method="post">
+                    <label>Email address</label>
+                    <input type="email" name="email" required>
+
+                    <label>Password</label>
+                    <input type="password" name="password" required>
+
+                    <button type="submit" class="login-btn">Log in</button>
+                </form>
+
+                <p style="color:red" class="error" th:text="${error}"></p>
+
+                <a href="#" class="forgot">Forgot your password?</a>
+
+                <div class="divider">
+                    <span>or</span>
+                </div>
+
+                <button class="google-btn">
+                    <a href="/register">New to Splitwise? Sign up</a>
+                </button>
+
+            </div>
+        </div>
+
+    </body>
+</html>

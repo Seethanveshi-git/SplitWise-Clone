@@ -1,0 +1,144 @@
+<div th:fragment="rightPanel">
+
+  <!-- ================= FRIEND VIEW ================= -->
+  <section th:if="${view == 'friend'}" class="right-panel-tabs">
+
+    <!-- Tab buttons -->
+    <div class="right-tabs">
+      <button class="tab active"
+              onclick="switchRightTab(this, 'tab-balance')">☰</button>
+
+      <button class="tab"
+              onclick="switchRightTab(this, 'tab-trends')">📊</button>
+
+      <button class="tab"
+              onclick="switchRightTab(this, 'tab-settings')">⚙️</button>
+    </div>
+
+    <!-- TAB: BALANCE -->
+    <div class="right-tab-content active" id="tab-balance">
+
+      <div class="balance-summary">
+        <small>YOUR BALANCE</small>
+
+        <div class="balance-user">
+          <span th:text="${selectedFriend.username}">Friend</span>
+          <span>owes you</span>
+        </div>
+
+        <div class="balance-amount positive">
+          ₹617.33
+        </div>
+      </div>
+
+      <div class="right-card">
+        <div class="card-row">
+          <span>Total you paid</span>
+          <strong>₹0.00</strong>
+        </div>
+        <div class="card-row">
+          <span>Your share</span>
+          <strong>₹0.00</strong>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- TAB: TRENDS -->
+    <div class="right-tab-content" id="tab-trends">
+      <p class="muted">Trends will appear here</p>
+    </div>
+
+    <!-- TAB: SETTINGS -->
+    <div class="right-tab-content" id="tab-settings">
+
+      <div class="right-actions">
+        <form th:if="${friendship != null}"
+              th:action="@{/friends/remove/{id}(id=${friendship.id})}"
+              method="post"
+              onsubmit="return confirm('Remove this friend?');">
+          <button class="btn secondary full">Remove friend</button>
+        </form>
+
+        <form th:if="${friendship != null && friendship.status == 'PENDING'}"
+              th:action="@{/friends/resend/{id}(id=${friendship.id})}"
+              method="post">
+          <button class="btn secondary full">Resend invite</button>
+        </form>
+        <form th:if="${friendship != null && friendship.status == 'PENDING'}"
+              th:action="@{/friends/edit/{id}(id=${friendship.id})}"
+              method="get">
+          <button class="btn secondary full">Edit Info</button>
+        </form>
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- ================= GROUP VIEW ================= -->
+  <section th:if="${view == 'details'}" class="right-panel-tabs">
+
+    <!-- Tab buttons -->
+    <div class="right-tabs">
+      <button class="tab active"
+              onclick="switchRightTab(this, 'group-tab-balances')">☰</button>
+
+      <button class="tab"
+              onclick="switchRightTab(this, 'group-tab-trends')">📊</button>
+
+      <button class="tab"
+              onclick="switchRightTab(this, 'group-tab-settings')">⚙️</button>
+    </div>
+
+    <!-- TAB: GROUP BALANCES -->
+    <div class="right-tab-content active" id="group-tab-balances">
+
+      <h4 class="panel-section-title">GROUP BALANCES</h4>
+
+      <div th:each="member : ${selectedGroup.members}"
+           class="group-balance-row">
+
+        <span th:text="${member.displayName}">Member name</span>
+
+        <span class="settled"
+              th:text="${member.status == 'ACCEPTED' ? 'settled up' : member.status}">
+          status
+        </span>
+
+      </div>
+
+
+    </div>
+
+    <!-- TAB: TRENDS -->
+    <div class="right-tab-content" id="group-tab-trends">
+
+      <h4 class="panel-section-title">TRENDS THIS MONTH</h4>
+
+      <div class="right-card">
+        <div class="card-row">
+          <span>Total you paid</span>
+          <strong>₹0.00</strong>
+        </div>
+        <div class="card-row">
+          <span>Your share</span>
+          <strong>₹0.00</strong>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- TAB: SETTINGS -->
+    <div class="right-tab-content" id="group-tab-settings">
+
+      <div class="right-actions">
+        <a th:href="@{/groups/edit/{id}(id=${selectedGroup.groupId})}"
+           class="link">Edit group</a>
+      </div>
+
+    </div>
+
+  </section>
+</div>

@@ -2,419 +2,35 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Splitwise - Clone</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        :root { --sw-teal: #1cc29f; --sw-orange: #ff6533; --sw-border: #ddd; }
-        body { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; height: 100vh; overflow: hidden; }
-
-
-        .sw-navbar { background-color: var(--sw-teal); color: white; padding: 5px 20px; height: 45px; }
-
-
-        .sidebar { background-color: #f8f9fa; border-right: 1px solid var(--sw-border); height: calc(100vh - 45px); overflow-y: auto; }
-        .main-content { height: calc(100vh - 45px); overflow-y: auto; border-right: 1px solid var(--sw-border); }
-        .right-panel { height: calc(100vh - 45px); overflow-y: auto; padding: 20px; }
-
-
-        .nav-item-custom { padding: 8px 15px; color: #666; text-decoration: none; display: block; font-size: 14px; }
-        .nav-item-custom:hover { background-color: #eee; }
-        .nav-item-custom.active { border-left: 4px solid var(--sw-teal); color: var(--sw-teal); font-weight: bold; }
-        .section-header { background: #eee; padding: 5px 15px; font-size: 11px; font-weight: bold; color: #999; text-transform: uppercase; }
-
-
-        .btn-orange { background-color: var(--sw-orange); color: white; border: none; font-weight: bold; }
-        .btn-teal { background-color: var(--sw-teal); color: white; border: none; font-weight: bold; }
-        .text-teal { color: var(--sw-teal); }
-        .text-orange { color: var(--sw-orange); }
-
-        .expense-row { border-bottom: 1px solid #eee; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
-        .date-box { font-size: 11px; color: #999; text-align: center; width: 40px; margin-right: 15px; }
-
-        .tab-switch { display: none; }
-
-        .tab-labels { border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 15px; display: flex; }
-        .tab-label {
-            background: #eee; border: 1px solid #ccc; border-radius: 4px;
-            padding: 2px 8px; color: #666; cursor: pointer; margin-right: 2px;
-            font-size: 14px;
-        }
-        .tab-label:hover { background: #e0e0e0; }
-
-        .tab-content { display: none; }
-
-
-        /* 4. Active state for buttons (adds the teal underline) */
-        #radio-balances:checked ~ .tab-labels label[for="radio-balances"],
-        #radio-calendar:checked ~ .tab-labels label[for="radio-calendar"],
-        #radio-trends:checked ~ .tab-labels label[for="radio-trends"],
-        #radio-whiteboard:checked ~ .tab-labels label[for="radio-whiteboard"],
-        #radio-settings:checked ~ .tab-labels label[for="radio-settings"] {
-            background: #fff;
-            border-bottom: 1px solid transparent;
-            box-shadow: 0 2px 0 var(--sw-teal);
-        }
-        #radio-balances:checked ~ .tab-panels #content-balances,
-        #radio-trends:checked ~ .tab-panels #content-trends,
-        #radio-settings:checked ~ .tab-panels #content-settings {
-            display: block;
-        }
-
-        #radio-f-balances:checked ~ .tab-panels #content-f-balances,
-        #radio-f-trends:checked ~ .tab-panels #content-f-trends,
-        #radio-f-settings:checked ~ .tab-panels #content-f-settings {
-            display: block;
-        }
-
-        .panel-section-title { font-size: 11px; font-weight: bold; color: #999; text-transform: uppercase; margin-bottom: 12px; }
-        .whiteboard-box { border: 1px solid #ccc; padding: 10px; background: #fff; font-size: 13px; color: #999; min-height: 60px; }
-        .setting-btn { width: 100%; text-align: left; margin-bottom: 5px; font-size: 13px; background: #f8f9fa; border: 1px solid #ddd; padding: 5px 10px; border-radius: 4px;}
-
-
-        .popup-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.4);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-        }
-
-        /* Popup box */
-        .popup-box {
-            background: #fff;
-            width: 320px;
-            border-radius: 6px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-            animation: popupFade 0.2s ease;
-        }
-
-        /* Header */
-        .popup-header {
-            padding: 10px 15px;
-            border-bottom: 1px solid #eee;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .popup-close {
-            cursor: pointer;
-            font-size: 20px;
-            color: #999;
-        }
-
-        /* Body */
-        .popup-body {
-            padding: 15px;
-        }
-
-        /* Footer */
-        .popup-footer {
-            padding: 10px 15px;
-            border-top: 1px solid #eee;
-            display: flex;
-            justify-content: flex-end;
-            gap: 8px;
-        }
-
-        @keyframes popupFade {
-            from { transform: scale(0.95); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-
-    </style>
+    <title>Splitwise</title>
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
 </head>
 <body>
 
-<nav class="sw-navbar d-flex justify-content-between align-items-center">
-    <div class="fw-bold fs-5">Splitwise</div>
-    <div class="dropdown">
-        <span class="dropdown-toggle cursor-pointer" th:text="${user.username}">User</span>
+<header class="sw-navbar">
+    <div class="nav-left">
+        <span class="logo">Splitwise</span>
     </div>
-</nav>
-
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-2 sidebar p-0">
-            <a th:href="@{/dashboard}" class="nav-item-custom" th:classappend="${view == 'dashboard' ? 'active' : ''}">🏁 Dashboard</a>
-            <a href="#" class="nav-item-custom">🚩 Recent activity</a>
-            <div class="p-2"><input type="text" class="form-control form-control-sm" placeholder="Filter by name"></div>
-            <a href="#" class="nav-item-custom">📑 All expenses</a>
-
-            <div class="section-header d-flex justify-content-between">
-                <span>Groups</span>
-                <a th:href="@{/groups/newgroup}" class="text-muted text-decoration-none">+ add</a>
-            </div>
-            <div th:each="m : ${user.memberships}">
-                <a th:href="@{/groups/view/{id}(id=${m.group.groupId})}"
-                   class="nav-item-custom"
-                   th:classappend="${selectedGroup != null && selectedGroup.groupId == m.group.groupId ? 'active' : ''}"
-                   th:text="'🏷 ' + ${m.group.groupName}"></a>
-            </div>
-
-            <div class="section-header mt-3 d-flex justify-content-between">
-                <span>Friends</span>
-                <a href="javascript:void(0)"
-                   class="text-muted text-decoration-none"
-                   onclick="openAddFriendPopup()">
-                    + add
-                </a>
-            </div>
-            <div th:each="f : ${friends}">
-                <a th:href="@{/friends/{id}(id=${f.friend.id})}"
-                   class="nav-item-custom"
-                   th:classappend="${selectedFriend != null && selectedFriend.id == f.friend.id ? 'active' : ''}">
-                    👤 <span th:text="${f.friend.username}">Friend</span>
-
-                    <span th:if="${f.status == 'PENDING'}"
-                          class="badge bg-warning text-dark ms-1">pending</span>
-                </a>
-            </div>
-
-        </div>
-
-        <div class="col-md-7 main-content p-0">
-
-            <div th:if="${view == 'dashboard'}">
-                <div class="d-flex justify-content-between align-items-center p-3 border-bottom bg-light">
-                    <h4 class="mb-0">Dashboard</h4>
-                    <div>
-                        <button class="btn btn-orange btn-sm px-3">Add an expense</button>
-                        <button class="btn btn-teal btn-sm px-3">Settle up</button>
-                    </div>
-                </div>
-                <div class="row m-0 text-center border-bottom bg-white shadow-sm">
-                    <div class="col-4 border-end py-3"><small class="text-muted uppercase">total balance</small><br><span class="text-orange">- ₹95.00</span></div>
-                    <div class="col-4 border-end py-3"><small class="text-muted uppercase">you owe</small><br><span class="text-orange">₹95.00</span></div>
-                    <div class="col-4 py-3"><small class="text-muted uppercase">you are owed</small><br><span>₹0.00</span></div>
-                </div>
-                <div class="p-4 row">
-                    <div class="col-6 border-end">
-                        <h6 class="text-muted mb-3">YOU OWE</h6>
-                        <div class="d-flex align-items-start mb-3">
-                            <div class="bg-secondary rounded-circle text-white p-2 me-2">👤</div>
-                            <div>
-                                <div class="fw-bold small">Jnanadeep</div>
-                                <div class="text-orange small">you owe ₹95.00</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <h6 class="text-muted mb-3 text-end">YOU ARE OWED</h6>
-                        <p class="text-muted small text-end">You are not owed anything</p>
-                    </div>
-                </div>
-            </div>
-
-            <div th:if="${view == 'details'}">
-                <div class="d-flex justify-content-between align-items-center p-3 border-bottom bg-light">
-                    <div class="d-flex align-items-center">
-                        <div class="bg-secondary text-white rounded p-2 me-2">✈️</div>
-                        <h4 class="mb-0" th:text="${selectedGroup.groupName}">Group Name</h4>
-                    </div>
-                    <div>
-                        <button class="btn btn-orange btn-sm px-3">Add an expense</button>
-                        <button class="btn btn-teal btn-sm px-3">Settle up</button>
-                    </div>
-                </div>
-                <div class="expense-row">
-                    <div class="d-flex align-items-center">
-                        <div class="date-box">DEC<br><span class="fs-5">27</span></div>
-                        <div class="bg-light p-2 me-2 border">🎬</div>
-                        <div class="fw-bold">movie</div>
-                    </div>
-                    <div class="d-flex text-end">
-                        <div class="me-4 small text-muted">Jnanadeep paid<br><span class="text-dark fw-bold">₹200.00</span></div>
-                        <div class="small text-muted">you lent<br><span class="text-teal fw-bold">₹100.00</span></div>
-                    </div>
-                </div>
-            </div>
-            <div th:if="${view == 'friend'}">
-
-                <div th:if="${successMessage}"
-                     class="alert alert-success alert-dismissible fade show mb-3">
-                    <span th:text="${successMessage}"></span>
-                    <button type="button"
-                            class="btn-close"
-                            data-bs-dismiss="alert"></button>
-                </div>
-                <!-- Friend header -->
-                <div class="d-flex justify-content-between align-items-center p-3 border-bottom bg-light">
-                    <div>
-                        <h4 class="mb-0" th:text="${selectedFriend.username}">Friend Name</h4>
-                        <small class="text-muted" th:text="${selectedFriend.email}">email</small>
-
-                        <span th:if="${friendship.status == 'PENDING'}"
-                              class="badge bg-warning text-dark ms-2">
-                            Invitation pending
-                        </span>
-                    </div>
-
-                    <div>
-                        <button class="btn btn-orange btn-sm px-3">Add an expense</button>
-                        <button class="btn btn-teal btn-sm px-3">Settle up</button>
-                    </div>
-                </div>
-
-                <!-- Friend balances -->
-                <div class="row m-0 text-center border-bottom bg-white shadow-sm">
-                    <div class="col-4 border-end py-3">
-                        <small class="text-muted uppercase">total balance</small><br>
-                        <span class="text-orange">₹0.00</span>
-                    </div>
-                    <div class="col-4 border-end py-3">
-                        <small class="text-muted uppercase">you owe</small><br>
-                        <span class="text-orange">₹0.00</span>
-                    </div>
-                    <div class="col-4 py-3">
-                        <small class="text-muted uppercase">you are owed</small><br>
-                        <span>₹0.00</span>
-                    </div>
-                </div>
-
-                <!-- Empty state -->
-                <div class="text-center p-5 text-muted">
-                    <p class="mb-1">No expenses yet</p>
-                    <small>Start by adding an expense with this friend</small>
-                </div>
-
-            </div>
-        </div>
-
-        <div class="col-md-3 right-panel">
-            <div th:if="${view == 'details'}">
-
-                <input type="radio" name="right-nav" id="radio-balances" class="tab-switch" checked>
-                <input type="radio" name="right-nav" id="radio-trends" class="tab-switch">
-                <input type="radio" name="right-nav" id="radio-settings" class="tab-switch">
-
-                <div class="tab-labels">
-                    <label for="radio-balances" class="tab-label">☰</label>
-                    <label for="radio-trends" class="tab-label">📊</label>
-                    <label for="radio-settings" class="tab-label">⚙️</label>
-                </div>
-
-                <div class="tab-panels">
-                    <div id="content-balances" class="tab-content">
-                        <h6 class="panel-section-title">GROUP BALANCES</h6>
-                        <div th:each="member : ${selectedGroup.members}" class="d-flex align-items-center mb-2">
-                            <div class="bg-light border rounded-circle p-2 me-2" style="width: 35px; height: 35px; text-align: center; line-height: 1;">
-                                <span th:text="${member.user != null ? '👤' : '✉️'}"></span>
-                            </div>
-                            <div>
-                                <div class="small fw-bold" th:text="${member.displayName}">Member</div>
-                                <div class="small text-muted">settled up</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="content-trends" class="tab-content">
-                        <h6 class="panel-section-title">TRENDS THIS MONTH</h6>
-                        <div class="small mb-1 d-flex justify-content-between"><span>Total you paid for</span> <span class="text-teal">₹0.00</span></div>
-                        <div class="small mb-1 d-flex justify-content-between"><span>Your total share</span> <span class="text-orange">₹0.00</span></div>
-                    </div>
-                    <div id="content-settings" class="tab-content">
-                        <h6 class="panel-section-title">GROUP SETTINGS</h6>
-                        <a th:href="@{/groups/edit/{id}(id=${selectedGroup.groupId})}" class="btn setting-btn">
-                            Edit group settings
-                        </a>
-                    </div>
-                </div>
-
-            </div>
-
-            <div th:if="${view == 'friend'}">
-
-                <input type="radio" name="right-nav-f" id="radio-f-balances" class="tab-switch" checked>
-                <input type="radio" name="right-nav-f" id="radio-f-trends" class="tab-switch">
-                <input type="radio" name="right-nav-f" id="radio-f-settings" class="tab-switch">
-
-                <div class="tab-labels">
-                    <label for="radio-f-balances" class="tab-label">☰</label>
-                    <label for="radio-f-trends" class="tab-label">📊</label>
-                    <label for="radio-f-settings" class="tab-label">⚙️</label>
-                </div>
-
-                <!-- ✅ THIS WAS MISSING -->
-                <div class="tab-panels">
-
-                    <div id="content-f-balances" class="tab-content">
-                        <h6 class="panel-section-title">FRIEND BALANCES</h6>
-
-                        <div class="d-flex align-items-center mb-2">
-                            <div class="bg-light border rounded-circle p-2 me-2"
-                                 style="width: 35px; height: 35px;">
-                                👤
-                            </div>
-                            <div>
-                                <div class="small fw-bold"
-                                     th:text="${selectedFriend.username}">
-                                    Friend
-                                </div>
-                                <div class="small text-muted">settled up</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="content-f-trends" class="tab-content">
-                        <h6 class="panel-section-title">TRENDS WITH FRIEND</h6>
-                        <div class="small d-flex justify-content-between">
-                            <span>Total you paid</span>
-                            <span class="text-teal">₹0.00</span>
-                        </div>
-                        <div class="small d-flex justify-content-between">
-                            <span>Your share</span>
-                            <span class="text-orange">₹0.00</span>
-                        </div>
-                    </div>
-
-                    <div id="content-f-settings" class="tab-content">
-                        <h6 class="panel-section-title">FRIEND SETTINGS</h6>
-
-                        <form th:action="@{/friends/remove/{id}(id=${friendship.id})}"
-                              method="post"
-                              th:if="${friendship != null}">
-                            <button class="btn setting-btn text-danger"
-                                    onsubmit="return confirm('Are you sure you want to remove this friend?')">
-                                Remove friend
-                            </button>
-                        </form>
-
-                        <div th:if="${friendship.status == 'PENDING'}">
-                            <form th:action="@{/friends/edit/{id}(id=${friendship.id})}"
-                                  method="get"
-                                  th:if="${friendship.status == 'PENDING'}">
-                                <button class="btn setting-btn">
-                                    Edit info
-                                </button>
-                            </form>
-                            <form th:action="@{/friends/resend/{id}(id=${friendship.id})}"
-                                  method="post"
-                                  style="display:inline;">
-                                <button type="submit" class="btn btn-sm btn-outline-secondary">
-                                    Resend invite
-                                </button>
-                            </form>
-
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-
-        </div>
-            <div th:if="${view == 'create'}" class="text-center mt-5">
-                <img src="https://via.placeholder.com/150" class="mb-3">
-                <p class="small text-muted">Subscribe to Splitwise Pro for no ads and more features!</p>
-            </div>
-        </div>
+    <div class="nav-right">
+        <span class="user">Jaan ⌄</span>
     </div>
+</header>
+<div class="layout">
+
+    <aside class="left-panel"
+           th:replace="~{fragments/left-panel :: leftPanel}">
+    </aside>
+
+    <section class="main-panel"
+             th:replace="~{fragments/main-panel :: mainPanel}">
+    </section>
+
+    <aside class="right-panel"
+           th:replace="~{fragments/right-panel :: rightPanel}">
+    </aside>
+
 </div>
+
 <!-- Add Friend Popup -->
 <div id="addFriendPopup" class="popup-overlay">
     <div class="popup-box">
@@ -459,6 +75,20 @@
         const alert = document.querySelector('.alert');
         if (alert) alert.remove();
     }, 3000);
+    function switchRightTab(button, tabId) {
+        const panel = button.closest('.right-panel-tabs');
+
+        // deactivate tabs
+        panel.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+
+        // hide contents
+        panel.querySelectorAll('.right-tab-content')
+             .forEach(c => c.classList.remove('active'));
+
+        // activate selected
+        button.classList.add('active');
+        panel.querySelector('#' + tabId).classList.add('active');
+    }
 
 </script>
 

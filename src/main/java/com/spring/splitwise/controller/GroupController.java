@@ -4,7 +4,9 @@ import com.spring.splitwise.model.Group;
 import com.spring.splitwise.model.User;
 import com.spring.splitwise.repository.UserRepository;
 import com.spring.splitwise.repository.*;
+import com.spring.splitwise.service.FriendService;
 import com.spring.splitwise.service.GroupService;
+import com.spring.splitwise.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,28 +21,36 @@ public class GroupController {
     @Autowired
     private GroupService groupService;
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
+    private FriendService friendService;
 
-    public GroupController(GroupService groupService, UserRepository userRepository){
+    public GroupController(GroupService groupService, UserService userService , FriendService friendService){
         this.groupService = groupService;
-        this.userRepository = userRepository;
+        this.userService = userService;
+        this.friendService = friendService;
     }
 
     private User getHardcodedUser() {
-        return userRepository.findById(1L).orElseThrow();
+        return userService.findById(5L);
     }
 
-    @GetMapping({"/", "/dashboard"})
+    @GetMapping("/")
     public String dashboard(Model model) {
-        model.addAttribute("user", getHardcodedUser());
+        User user = getHardcodedUser();
+        model.addAttribute("user", user);
+        model.addAttribute("friends", friendService.getFriends(user));
         model.addAttribute("view", "dashboard");
         return "dashboard";
     }
 
     @GetMapping
     public String showlistgroups(Model model){
-        List<Group> listOfGroups =  this.groupService.getGroupsForUser(1L);
-        System.out.println(listOfGroups.size());
+        User user = getHardcodedUser();
+
+        model.addAttribute("user", user);
+        model.addAttribute("friends", friendService.getFriends(user));
+        model.addAttribute("view", "dashboard");
+
         return "dashboard";
     }
 
@@ -56,22 +66,26 @@ public class GroupController {
     public String saveGroup(@ModelAttribute Group group,
                             @RequestParam("memberEmails") List<String> memberEmails,
                             @RequestParam("memberNames") List<String> memberNames) {
-        Long creatorId = 1L;
+        Long creatorId = 9L;
         groupService.createNewGroup(group, creatorId, memberEmails, memberNames);
         return "redirect:/groups/";
     }
 
     @GetMapping("/view/{id}")
-    public String viewGroup(@PathVariable Long id, Model model) {
-        User user = getHardcodedUser();
+    public String viewGroup(@PathVariable Long id,
+                            Model model) {
+
+        User user = userService.getUserWithMembers(5L);
         Group group = groupService.findById(id);
 
         model.addAttribute("user", user);
+        model.addAttribute("friends", friendService.getFriends(user));
         model.addAttribute("selectedGroup", group);
         model.addAttribute("view", "details");
 
         return "dashboard";
     }
+
 
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable("id") Long id, Model model) {

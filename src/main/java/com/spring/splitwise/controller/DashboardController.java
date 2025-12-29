@@ -1,37 +1,35 @@
 package com.spring.splitwise.controller;
 
 import com.spring.splitwise.model.User;
-import com.spring.splitwise.service.FriendshipService;
+import com.spring.splitwise.service.FriendService;
 import com.spring.splitwise.service.UserService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class DashboardController {
 
-    private FriendshipService friendshipService;
-    private UserService userService;
+    private final FriendService friendService;
+    private final UserService userService;
 
-    public DashboardController(UserService userService,
-                               FriendshipService friendService) {
+    public DashboardController(FriendService friendService,
+                               UserService userService) {
+        this.friendService = friendService;
         this.userService = userService;
-        this.friendshipService = friendService;
     }
 
     @GetMapping("/dashboard")
-    public String dashboard(@RequestParam(required = false) Long friendId, Model model) {
+    public String dashboard(Model model) {
 
-        User currentUser = userService.getByEmail("vikram@gmail.com");
+        User user = userService.getUserWithMembers(5L);
 
-        model.addAttribute("user", currentUser);
-        model.addAttribute("friends", friendshipService.getFriends(currentUser));
-        if(friendId != null){
-            User selectedFriend = userService.getById(friendId);
-            model.addAttribute("selectedFriend",selectedFriend);
-        }
+        model.addAttribute("user", user);
+        model.addAttribute("friends", friendService.getFriends(user));
+        model.addAttribute("view", "dashboard");
 
         return "dashboard";
     }
+
 }
