@@ -44,4 +44,10 @@ public class User {
     @Column(nullable = false)
     private boolean active = true;
 
+    @OneToMany(mappedBy = "paidBy")
+    private List<Expense> paidExpenses;
+
+    @OneToMany(mappedBy = "user")
+    private List<ExpenseSplit> expenseSplits;
+
 }

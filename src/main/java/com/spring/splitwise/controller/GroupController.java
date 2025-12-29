@@ -31,7 +31,7 @@ public class GroupController {
     }
 
     private User getHardcodedUser() {
-        return userService.findById(5L);
+        return userService.findById(1L);
     }
 
     @GetMapping("/")
@@ -66,7 +66,7 @@ public class GroupController {
     public String saveGroup(@ModelAttribute Group group,
                             @RequestParam("memberEmails") List<String> memberEmails,
                             @RequestParam("memberNames") List<String> memberNames) {
-        Long creatorId = 9L;
+        Long creatorId = 1L;
         groupService.createNewGroup(group, creatorId, memberEmails, memberNames);
         return "redirect:/groups/";
     }
@@ -75,7 +75,7 @@ public class GroupController {
     public String viewGroup(@PathVariable Long id,
                             Model model) {
 
-        User user = userService.getUserWithMembers(5L);
+        User user = userService.getUserWithMembers(1L);
         Group group = groupService.findById(id);
 
         model.addAttribute("user", user);

@@ -23,7 +23,7 @@ public class DashboardController {
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
 
-        User user = userService.getUserWithMembers(5L);
+        User user = userService.getUserWithMembers(1L);
 
         model.addAttribute("user", user);
         model.addAttribute("friends", friendService.getFriends(user));

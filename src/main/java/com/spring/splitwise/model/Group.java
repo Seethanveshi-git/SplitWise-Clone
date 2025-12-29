@@ -41,4 +41,8 @@ public class Group {
     )
     private List<Member> members = new ArrayList<>();
 
+
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Expense> expenses = new ArrayList<>();
+
 }

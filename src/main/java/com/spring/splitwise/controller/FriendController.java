@@ -28,7 +28,7 @@ public class FriendController {
     public String viewFriend(@PathVariable Long friendId,
                              Model model) {
 
-        User user = userService.getUserWithMembers(5L);
+        User user = userService.getUserWithMembers(1L);
 
         User selectedFriend = userService.getById(friendId);
         Friend friendship =
@@ -48,7 +48,7 @@ public class FriendController {
     public String inviteFriend(@RequestParam String email,
                                RedirectAttributes redirectAttributes) {
 
-        User user = userService.getUserWithMembers(5L);
+        User user = userService.getUserWithMembers(1L);
 
         redirectAttributes.addFlashAttribute(
                 "successMessage",
